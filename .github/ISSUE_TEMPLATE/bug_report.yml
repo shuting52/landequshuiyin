@@ -1,0 +1,58 @@
+name: Bug 报告
+description: 汇报解析 / 下载 / 界面异常
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 请尽量描述清楚,方便我快速定位～
+  - type: input
+    id: version
+    attributes:
+      label: App 版本
+      description: 设置页可查看版本号
+      placeholder: 例如 3.0.7
+    validations:
+      required: true
+  - type: dropdown
+    id: platform
+    attributes:
+      label: 出问题的平台
+      options:
+        - 抖音
+        - 快手
+        - 微信视频号
+        - 微信公众号
+        - 小红书
+        - 豆包
+        - Dola
+        - 通义千问
+        - 即梦
+        - 小云雀
+        - 其他 / 不确定
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: 发生了什么
+      description: 现象 + 期望表现
+      placeholder: 粘贴链接后解析一直转圈 / 下载到一半失败 / 图片顺序不对…
+    validations:
+      required: true
+  - type: textarea
+    id: how
+    attributes:
+      label: 复现步骤
+      placeholder: |
+        1. 复制 …
+        2. 粘贴到 …
+        3. 点击 …
+    validations:
+      required: true
+  - type: textarea
+    id: misc
+    attributes:
+      label: 补充信息
+      description: 机型 / 系统版本 / 网络(移动数据 or WiFi)/ 日志截图

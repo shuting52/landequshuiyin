@@ -1,0 +1,27 @@
+name: 功能建议
+description: 提议新平台 / 新能力
+title: "[Feature] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        ## 你的想法很有价值～
+  - type: textarea
+    id: idea
+    attributes:
+      label: 想做什么
+      placeholder: 支持某某平台的解析 / 增加某某下载选项…
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: 为什么需要
+      placeholder: 使用场景 / 解决了什么痛点
+  - type: input
+    id: link
+    attributes:
+      label: 示例链接(可选)
+      description: 平台分享链接样例,方便我验证
+      placeholder: https://…

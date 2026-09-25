@@ -1333,6 +1333,10 @@ enum ParsePlatform {
   douyin('抖音'),
   kuaishou('快手'),
   doubao('豆包'),
+  dola('Dola'),
+  qianwen('通义千问'),
+  jimeng('即梦'),
+  xiaoyunque('小云雀'),
   wechatChannels('微信视频号'),
 
   /// 认不出/不在名单里。走 media-parser。
@@ -1363,6 +1367,17 @@ const Map<String, ParsePlatform> _kPlatformHosts = <String, ParsePlatform>{
   // 豆包
   'doubao.com': ParsePlatform.doubao,
   'doubao.cn': ParsePlatform.doubao,
+  // Dola(豆包海外版)
+  'dola.com': ParsePlatform.dola,
+  // 通义千问(对话分享 + AI Studio 活动分享页)
+  'qianwen.my.cn': ParsePlatform.qianwen,
+  'activity.qianwen.com': ParsePlatform.qianwen,
+  'tongyi.aliyun.com': ParsePlatform.qianwen,
+  // 即梦 AI
+  'jimeng.jianying.com': ParsePlatform.jimeng,
+  // 小云雀 AI
+  'xiaoyunque.jianying.com': ParsePlatform.xiaoyunque,
+  'xyq.jianying.com': ParsePlatform.xiaoyunque,
   // 微信视频号
   'channels.weixin.qq.com': ParsePlatform.wechatChannels,
   'finder.video.qq.com': ParsePlatform.wechatChannels,
