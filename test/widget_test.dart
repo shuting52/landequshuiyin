@@ -2318,7 +2318,7 @@ void main() {
     expect(defaultOverscroll, greaterThan(0));
 
     // 本尊:缩放拉满让内容真的溢出 —— 不溢出时列表根本不接受拖动。
-    SharedPreferences.setMockInitialValues({'ui.scale': 1.3});
+    SharedPreferences.setMockInitialValues({'ui.scale': 1.6});
     final prefs = await SharedPreferences.getInstance();
     await tester.pumpWidget(LiquidGlassDemo(prefs: prefs));
     await tester.pump(const Duration(milliseconds: 300));
