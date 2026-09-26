@@ -1177,7 +1177,7 @@ String safeFileName(
   String raw, {
   String ext = '',
   int index = 0,
-  String fallback = '即存媒体',
+  String fallback = '懒得去媒体',
   int maxBytes = 66,
 }) {
   final rawCleaned = raw
@@ -1187,7 +1187,7 @@ String safeFileName(
   // 标签就剥不掉了。
   //
   // 只有压出来还有点东西才用:整个标题都是 emoji 时会被清成空串,那种情况宁可把
-  // 它留着(`🎬🔥.mp4` 总比 `即存媒体.mp4` 认得出来),但一个字的残渣("警")也不如
+  // 它留着(`🎬🔥.mp4` 总比 `懒得去媒体.mp4` 认得出来),但一个字的残渣("警")也不如
   // 原名,所以门槛定在 2 字节。
   final stripped = shortenTitle(rawCleaned);
   final cleaned = (_utf8Len(stripped) >= 2 ? stripped : rawCleaned)

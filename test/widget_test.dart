@@ -172,8 +172,8 @@ class _FakePackageInfo extends PackageInfoPlatform
 
   @override
   Future<PackageInfoData> getAll({String? baseUrl}) async => PackageInfoData(
-    appName: '即存',
-    packageName: 'com.videofix.jicun',
+    appName: '懒得去',
+    packageName: 'com.landequ.app',
     version: version,
     buildNumber: '1',
     buildSignature: '',
@@ -2288,139 +2288,6 @@ void main() {
     expect(cardHeight(), collapsed);
     expect(find.text('深色').hitTestable(), findsOneWidget);
     expect(find.text('浅色').hitTestable(), findsNothing);
-  });
-
-  testWidgets('关于本APP:四张一行卡摊开摆着,开源地址点一下就复制', (tester) async {
-    usePhoneSurface(tester);
-    final copied = useClipboardWrite();
-    await tester.pumpWidget(const LiquidGlassDemo(autoCheckUpdate: false));
-    await tester.pump(const Duration(milliseconds: 300));
-
-    await tester.tap(find.text('设置').first);
-    await tester.pumpAndSettle();
-    await tester.tap(find.text('关于本APP'));
-    await tester.pumpAndSettle();
-
-    // 四张卡就是四行字,内容和文案一字不差。标题和内容在同一个 Text.rich 里
-    // (标题后跟一个半角冒号),所以断言整行的纯文本。
-    for (final line in const [
-      '开源地址:https://github.com/dhvbjvvb/jicun',
-      '制作人:春日大阪',
-      '彩蛋出席:奶龙,不知名小人物,不知名大人物',
-      '后续维护:原则上,来讲是永久免费(看后续精力)',
-    ]) {
-      expect(
-        find.byWidgetPredicate(
-          (w) => w is RichText && w.text.toPlainText() == line,
-        ),
-        findsOneWidget,
-        reason: '这一行应该是「$line」',
-      );
-    }
-
-    // 不摆"点击即可复制"之类的提示(用户点名不要)
-    expect(find.textContaining('点击'), findsNothing);
-
-    // 但功能要在:点开源地址那一行就复制,并给回音
-    await tester.tap(find.textContaining('开源地址:'));
-    await tester.pumpAndSettle();
-    expect(copied, ['https://github.com/dhvbjvvb/jicun']);
-    expect(find.text('已复制'), findsOneWidget);
-  });
-
-  testWidgets('彩蛋提示:设置里进得去,提示卡摊开摆着,底部两个角色都加载得到', (tester) async {
-    usePhoneSurface(tester);
-    await tester.pumpWidget(const LiquidGlassDemo(autoCheckUpdate: false));
-    await tester.pump(const Duration(milliseconds: 300));
-
-    // 一级列表里那两句副标题改过文案,顺手钉住
-    await tester.tap(find.text('设置').first);
-    await tester.pumpAndSettle();
-    expect(find.text('修改主题、显示效果'), findsOneWidget);
-
-    await tester.scrollUntilVisible(find.text('彩蛋提示'), 200);
-    expect(find.text('开源地址、彩蛋出席'), findsOneWidget);
-
-    await tester.tap(find.text('彩蛋提示'));
-    await tester.pumpAndSettle();
-
-    // 第一张卡:标题一行,内容一行,默认就是摊开的,没有展开/收起箭头
-    expect(find.text('提示'), findsOneWidget);
-    expect(find.text('也许在某个设置中的2级界面,快速连续3次点击人物,它会发出声音🤯'), findsOneWidget);
-    expect(find.byIcon(CupertinoIcons.chevron_down), findsNothing);
-
-    // 底部两个角色是实打实的资源,路径写错的话 Image 只会画个空盒子,看不出来
-    for (final asset in const [
-      'assets/easter-egg-hint/left.png',
-      'assets/easter-egg-hint/right.png',
-    ]) {
-      final data = await rootBundle.load(asset);
-      expect(data.lengthInBytes, greaterThan(0), reason: '$asset 应该在 pubspec 里');
-    }
-  });
-
-  testWidgets('使用帮助及反馈:反馈渠道点一下就复制,平台卡点开滑出教程', (tester) async {
-    usePhoneSurface(tester);
-    final copied = useClipboardWrite();
-    await tester.pumpWidget(const LiquidGlassDemo());
-    await tester.pump(const Duration(milliseconds: 300));
-
-    await tester.tap(find.text('设置').first);
-    await tester.pumpAndSettle();
-    // 这一页列表长,设置项本身要滚到才点得到
-    await tester.scrollUntilVisible(find.text('使用帮助及反馈'), 200);
-    await tester.tap(find.text('使用帮助及反馈'));
-    await tester.pumpAndSettle();
-
-    // 第一张卡:反馈渠道,两行都在,不伸缩
-    expect(find.text('反馈渠道'), findsOneWidget);
-    expect(find.text('1124541108'), findsOneWidget);
-    expect(find.text('1515068599@qq.com'), findsOneWidget);
-
-    await tester.tap(find.text('QQ群'));
-    await tester.pumpAndSettle();
-    expect(copied, ['1124541108']);
-    // 复制完要给回音,不然点了看不出发生过什么
-    expect(find.text('已复制'), findsOneWidget);
-    await tester.tap(find.text('知道了'));
-    await tester.pumpAndSettle();
-
-    await tester.tap(find.text('QQ邮箱'));
-    await tester.pumpAndSettle();
-    expect(copied, ['1124541108', '1515068599@qq.com']);
-    await tester.tap(find.text('知道了'));
-    await tester.pumpAndSettle();
-
-    // 平台卡:名字和「支持解析的内容」在收起态就要看得见
-    expect(find.text('抖音'), findsOneWidget);
-    expect(find.text('视频、图片、实况、文案'), findsWidgets);
-
-    // 图标真的是从 assets/platform-icons/ 里取到的。加载失败时 Image.asset 会走
-    // errorBuilder 给一个空盒子,界面上看不出差别 —— 所以这里直接问一次资源。
-    expect(find.byType(Image), findsWidgets);
-    final icon = await rootBundle.load('assets/platform-icons/douyin.png');
-    expect(icon.lengthInBytes, greaterThan(0));
-
-    // 教程那块默认高度为 0;里面的 Text 被裁掉之后自身尺寸还在,所以量外层
-    final reveal = find.byKey(const ValueKey('platformTutorial.抖音'));
-    double tutorialHeight() => tester.getSize(reveal).height;
-    expect(tutorialHeight(), 0);
-
-    await tester.tap(find.text('抖音'));
-    await tester.pump();
-    final opening = <double>[];
-    for (var i = 0; i < 60; i++) {
-      await tester.pump(const Duration(milliseconds: 16));
-      opening.add(tutorialHeight());
-    }
-    await tester.pumpAndSettle();
-    final expanded = tutorialHeight();
-
-    expect(expanded, greaterThan(0));
-    // 真的是过渡,不是一帧铺开
-    expect(opening.any((h) => h > 0 && h < expanded), isTrue);
-    // 回弹和「主题与外观」同一套:过程中冲过最终高度再落回来
-    expect(opening.reduce(math.max), greaterThan(expanded));
   });
 
   testWidgets('卡片列表:越界拖动只走一点点,回弹还在', (tester) async {

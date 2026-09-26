@@ -605,7 +605,7 @@ void main() {
     });
 
     test('空标题退回兜底名', () {
-      expect(safeFileName('   '), '即存媒体');
+      expect(safeFileName('   '), '懒得去媒体');
     });
 
     test('短标题原样保留', () {

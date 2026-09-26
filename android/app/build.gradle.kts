@@ -29,7 +29,11 @@ android {
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.videofix.jicun"
+        // 包名(安装身份):懒得去的拼音。中文不能做包名,所以用 lan de qu → landequ。
+        // namespace 保持 com.videofix.jicun 不动(Kotlin 源码零改动),安装到手机的
+        // 包名就由这一行决定。注意:换包名后老版本(com.videofix.jicun)无法覆盖安装,
+        // 需要卸载重装。
+        applicationId = "com.landequ.app"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion

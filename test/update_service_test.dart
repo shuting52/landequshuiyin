@@ -172,7 +172,7 @@ void main() {
         expect(
           release.mirrorUrls,
           contains(
-            '$mirror/https://github.com/dhvbjvvb/jicun/releases/download/'
+            '$mirror/https://github.com/shuting52/landequshuiyin/releases/download/'
             'v1.1.0/jicun-1.1.0.apk',
           ),
         );
@@ -183,7 +183,7 @@ void main() {
       );
       expect(
         release.directUrl,
-        'https://github.com/dhvbjvvb/jicun/releases/download/v1.1.0/jicun-1.1.0.apk',
+        'https://github.com/shuting52/landequshuiyin/releases/download/v1.1.0/jicun-1.1.0.apk',
       );
     });
 

@@ -894,7 +894,7 @@ class HomeShellState extends State<LiquidGlassDemo>
     }
     final popup = _popupContext;
     if (popup != null && popup.mounted) {
-      showInfo(popup, '还差一步', '请在系统设置里允许「即存」安装应用,回来就会自动安装。');
+      showInfo(popup, '还差一步', '请在系统设置里允许「懒得去」安装应用,回来就会自动安装。');
     }
   }
 
@@ -927,7 +927,7 @@ class HomeShellState extends State<LiquidGlassDemo>
     };
     final isDark = brightness == Brightness.dark;
     return CupertinoApp(
-      title: '即存',
+      title: '懒得去',
       debugShowCheckedModeBanner: false,
       navigatorKey: _navigatorKey,
       theme: CupertinoThemeData(

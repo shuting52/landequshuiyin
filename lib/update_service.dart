@@ -20,9 +20,9 @@ import 'preferred_ip.dart';
 /// 会逐条打出候选地址的结局和耗时,比探针更贴近真实网络。
 
 /// 开源仓库。
-const String kRepoOwner = 'dhvbjvvb';
+const String kRepoOwner = 'shuting52';
 
-const String kRepoName = 'jicun';
+const String kRepoName = 'landequshuiyin';
 
 /// 逐条候选地址的耗时/结局要不要打到控制台。
 ///

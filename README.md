@@ -1,12 +1,13 @@
-# 即存
+# 懒得去
 
 一个 Android 端的视频 / 图文解析与下载 App。粘贴一条分享链接,预览内容,挑清晰度,
 下载到系统相册。
 
 Flutter 写界面,下载这一段走 Kotlin 原生实现。
 
-- 版本:3.0.7
+- 版本:3.0.8
 - 平台:Android(Flutter 3.x / Dart SDK ^3.13.3 / JDK 17)
+- 包名:com.landequ.app(懒得去)
 - 许可证:MIT
 
 ## 功能

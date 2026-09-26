@@ -53,7 +53,7 @@ String downloadErrorMessage(Object error) {
 /// 的判断,不是系统里的渠道。
 const NotificationDetails kNotificationDetails = NotificationDetails(
   android: AndroidNotificationDetails(
-    '即存_notifications',
+    'landequ_notifications',
     '通知管理与下载',
     channelDescription: '下载完成、下载失败等提醒',
     importance: Importance.high,

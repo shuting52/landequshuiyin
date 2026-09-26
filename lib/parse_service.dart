@@ -220,7 +220,9 @@ bool _isUpstreamFormat(Map<String, dynamic> data) {
 List<VideoQuality> _primaryQualities(Map<String, dynamic> json) {
   final stored = _qualityList(json);
   if (stored.isNotEmpty) return stored;
-  final single = ParseResult._strOrNull(json['video_url']);
+  final single = _stripWatermarkParamsOrNull(
+    ParseResult._strOrNull(json['video_url']),
+  );
   if (single == null) return const [];
   final bitrate = ParseResult._intOrZero(json['bit_rate'] ?? json['bitrate']);
   if (bitrate <= 0) return const [];
@@ -240,6 +242,38 @@ List<VideoQuality> _qualityList(Object? item) {
   return dedupeQualities(out);
 }
 
+/// 即梦 / 剪映系视频流的 URL 水印参数清洗。
+///
+/// 即梦服务端给视频流时,水印是**靠 URL 参数切换**的:`cd=a|b|1|c` 第 3 段
+/// (下标 2)是水印开关,`lr` / `logo_type` 是防盗链/水印标记。把开关位关掉、
+/// 去掉这两个标记,能拿到**主体画面无水印**的版本(media-parser 的 jimeng
+/// parser 也是这么干的)。对不带这些参数的 URL 完全无副作用,所以全平台统一调用。
+String _stripWatermarkParams(String url) {
+  final uri = Uri.tryParse(url);
+  if (uri == null || uri.query.isEmpty) return url;
+  final params = <String, String>{};
+  uri.queryParameters.forEach((key, value) {
+    if (key == 'lr' || key == 'logo_type') return; // 水印/防盗链标记,直接去掉
+    params[key] = value;
+  });
+  final cd = params['cd'];
+  if (cd != null) {
+    final parts = cd.split('|');
+    // cd=0|0|1|3 → 第 3 段(下标 2)是水印开关:1 开 → 0 关
+    if (parts.length >= 3 && parts[2] == '1') {
+      parts[2] = '0';
+      params['cd'] = parts.join('|');
+    }
+  }
+  return uri.replace(queryParameters: params).toString();
+}
+
+/// 只在非 null 时清洗,保持调用处的空值语义。
+String? _stripWatermarkParamsOrNull(String? url) {
+  final u = url;
+  return u == null ? null : _stripWatermarkParams(u);
+}
+
 /// 一个清晰度条目 → [VideoQuality]。
 ///
 /// 上游给的对象长这样(实测 `video_backup[]`):
@@ -251,11 +285,13 @@ List<VideoQuality> _qualityList(Object? item) {
 VideoQuality? _qualityFromEntry(Object? entry) {
   switch (entry) {
     case String text:
-      final url = ParseResult._strOrNull(text);
+      final url = _stripWatermarkParamsOrNull(ParseResult._strOrNull(text));
       return url == null ? null : VideoQuality(url: url);
     case Map map:
-      final url = ParseResult._strOrNull(
-        map['url'] ?? map['play_url'] ?? map['video_url'],
+      final url = _stripWatermarkParamsOrNull(
+        ParseResult._strOrNull(
+          map['url'] ?? map['play_url'] ?? map['video_url'],
+        ),
       );
       if (url == null) return null;
       return VideoQuality(
@@ -368,7 +404,7 @@ class ParseResult {
     // 所以一律走 _str 兜底,别让一个意外类型把整个页面搞崩。
     final author = json['author'];
     final media = _mediaList(json['image_list']);
-    final videoUrl = _strOrNull(json['video_url']);
+    final videoUrl = _stripWatermarkParamsOrNull(_strOrNull(json['video_url']));
     final coverUrl = _strOrNull(json['cover_url']);
     final videos = _videoList(json['video_list']);
     final livePhotos = <LivePhoto>[
@@ -382,7 +418,7 @@ class ParseResult {
       authorName: author is Map ? _str(author['nickname']) : '',
       videoUrl: videoUrl,
       coverUrl: coverUrl,
-      audioUrl: _strOrNull(json['audio_url']),
+      audioUrl: _stripWatermarkParamsOrNull(_strOrNull(json['audio_url'])),
       // 有没有视频决定 image_list 里那些"图"算不算图集,见 [_cleanImages]
       // 实况图不算 —— 它自带静态帧,帖子封面往往就是图集里的第一张真图,
       // 拿它当"视频封面"剔掉会平白少一张图(最右实况帖实测)。
@@ -433,7 +469,7 @@ class ParseResult {
   }) {
     if (!_isUpstreamFormat(data)) return ParseResult.fromJson(data);
 
-    final videoUrl = _strOrNull(data['url']);
+    final videoUrl = _stripWatermarkParamsOrNull(_strOrNull(data['url']));
     final coverUrl = _strOrNull(data['cover']);
     final author = data['author'];
 
@@ -807,7 +843,9 @@ class ParseResult {
           final url = _strOrNull(map['url']);
           // 有 live_photo_url 就是实况图:主地址是静态图(留着当缩略图),
           // 真用来下载的是那个 MP4。
-          final live = _strOrNull(map['live_photo_url']);
+          final live = _stripWatermarkParamsOrNull(
+            _strOrNull(map['live_photo_url']),
+          );
           if (live != null) {
             livePhotos.add(LivePhoto(videoUrl: live, thumbUrl: url));
           } else if (url != null) {
@@ -846,10 +884,10 @@ class ParseResult {
   static String? _audioUrlOf(Object? value) {
     switch (value) {
       case String text:
-        return _strOrNull(text);
+        return _stripWatermarkParamsOrNull(_strOrNull(text));
       case Map map:
         for (final key in const <String>['url', 'play_url', 'audio_url']) {
-          final url = _strOrNull(map[key]);
+          final url = _stripWatermarkParamsOrNull(_strOrNull(map[key]));
           if (url != null) return url;
         }
         return null;
@@ -913,7 +951,9 @@ class ParseResult {
       final qualities = dedupeQualities(_qualityList(item));
       // 主地址缺失时用最高那档顶上:单独给了一份清晰度列表、却没给 `url` 的
       // 应答不该被整条丢掉。
-      final primary = url ?? (qualities.isEmpty ? null : qualities.first.url);
+      final primary = _stripWatermarkParamsOrNull(
+        url ?? (qualities.isEmpty ? null : qualities.first.url),
+      );
       if (primary == null) continue;
       videos.add(
         VideoItem(url: primary, coverUrl: cover, qualities: qualities),

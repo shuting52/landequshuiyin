@@ -37,7 +37,7 @@ class SubPage extends StatelessWidget {
   final String? headerImage;
 
   /// 顶栏图的宽高比。默认是画布比例 [kHeaderArtAspect];源图比例和画布差得多的
-  /// 那张(见 [AboutAppPage])要传自己的,否则图会被拉伸或缩得比预期小一圈。
+  /// 那张(见关于页)要传自己的,否则图会被拉伸或缩得比预期小一圈。
   final double headerAspect;
 
   /// 顶栏图整体上移多少(逻辑像素)。
@@ -275,7 +275,7 @@ class UiZoom extends StatelessWidget {
 /// 二级设置页的 Material 3 环境。
 ///
 /// 卡片本身与一级设置列表同一种毛玻璃(见 GlassPanel),这里只负责控件配色:
-/// 一份 Material 3 的 ColorScheme(用品牌蓝做种子,所以强调色仍是即存的蓝,
+/// 一份 Material 3 的 ColorScheme(用品牌蓝做种子,所以强调色仍是"懒得去"的蓝,
 /// 而不是 Google 默认的紫)。下面所有开关与单选都从它取色。
 class GoogleSurface extends StatelessWidget {
   const GoogleSurface({super.key, required this.brightness, required this.child});
