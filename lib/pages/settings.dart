@@ -1,6 +1,5 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:jicun/downloader.dart';
 import 'package:jicun/shell_controller.dart';
 import 'package:jicun/ui/glass.dart';
