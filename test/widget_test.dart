@@ -2333,8 +2333,8 @@ void main() {
 
     // 三张卡现在默认都是收起的,刚进页面撑不满一屏(见下一个用例)。
     // 这个用例要量「溢出时」的越界阻力,所以把三张都展开。先第一张再最后一张:
-    // 「主题模式」在最上面,先展开不会影响其它卡的可见性。
-    await tester.tap(find.text('主题模式'));
+    // 「系统主题」在最上面,先展开不会影响其它卡的可见性。
+    await tester.tap(find.text('系统主题'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('界面缩放大小'));
     await tester.pumpAndSettle();
