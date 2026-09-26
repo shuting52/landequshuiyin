@@ -2318,7 +2318,10 @@ void main() {
     expect(defaultOverscroll, greaterThan(0));
 
     // 本尊:缩放拉满让内容真的溢出 —— 不溢出时列表根本不接受拖动。
-    SharedPreferences.setMockInitialValues({'ui.scale': 1.6});
+    // 删除设置顶部图片后内容变矮,1.3 上限下两张卡展开不再溢出,所以三张全展开,
+    // 并把表面调矮一截,双保险保证内容溢出(越界阻力要量的是溢出的情形)。
+    SharedPreferences.setMockInitialValues({'ui.scale': 1.3});
+    tester.view.physicalSize = const Size(1260, 2100);
     final prefs = await SharedPreferences.getInstance();
     await tester.pumpWidget(LiquidGlassDemo(prefs: prefs));
     await tester.pump(const Duration(milliseconds: 300));
@@ -2329,15 +2332,17 @@ void main() {
     await tester.pumpAndSettle();
 
     // 三张卡现在默认都是收起的,刚进页面撑不满一屏(见下一个用例)。
-    // 这个用例要量「溢出时」的越界阻力,所以把后两张展开 —— 先展开最后一张:
-    // 反过来先展开「底栏外观样式」的话,「界面缩放大小」会被顶出列表的构建范围。
+    // 这个用例要量「溢出时」的越界阻力,所以把三张都展开。先第一张再最后一张:
+    // 「主题模式」在最上面,先展开不会影响其它卡的可见性。
+    await tester.tap(find.text('主题模式'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('界面缩放大小'));
     await tester.pumpAndSettle();
     await tester.tap(find.text('底栏外观样式'));
     await tester.pumpAndSettle();
 
-    // 锚在「底栏外观样式」上而不是最后一张卡:两张都展开之后,「界面缩放大小」
-    // 已经被顶出列表的构建范围,拿它当锚点会找不到。
+    // 锚在「底栏外观样式」上而不是最后一张卡:三张都展开之后,「界面缩放大小」
+    // 多半已被顶出列表的构建范围,拿它当锚点会找不到。
     final position = tester
         .state<ScrollableState>(
           find.ancestor(
